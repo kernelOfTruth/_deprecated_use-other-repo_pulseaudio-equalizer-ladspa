@@ -13,7 +13,7 @@ pygtk.require('2.0')
 import gtk, gobject
 import os
 
-configdir = os.getenv('HOME') + "/.pulse"
+configdir = os.getenv('HOME') + "/.config/pulse"
 eqconfig = configdir + "/equalizerrc"
 eqconfig2 = configdir + "/equalizerrc.test"
 eqpresets = eqconfig + ".availablepresets"
@@ -180,10 +180,13 @@ class Equalizer:
 		if os.path.isfile(presetdir1 + "/" + preset + ".preset"):
 			f = open(presetdir1 + "/" + preset + ".preset", "r")
 			rawdata=f.read().split('\n')
-		else:
+			f.close
+		elif os.path.isfile(presetdir2 + "/" + preset + ".preset"):
 			f = open(presetdir2 + "/" + preset + ".preset", "r")
 			rawdata=f.read().split('\n')
 			f.close
+		else:
+			print "Can't find %s preset" % preset
 
 		ladspa_filename = str(rawdata[0])
 		ladspa_name = str(rawdata[1])
@@ -359,7 +362,20 @@ class Equalizer:
         self.window.connect("destroy", self.destroy_equalizer)
         self.window.set_title(windowtitle + " [" + realstatus + "]")
         self.window.set_border_width(0)
-  	icon = self.window.set_icon_from_file("/usr/share/icons/hicolor/scalable/apps/multimedia-volume-control.svg")
+        
+        icon_theme = gtk.icon_theme_get_default()
+        icon_theme = gtk.icon_theme_get_default()
+        if icon_theme.has_icon("multimedia-volume-control"):
+            icon = icon_theme.load_icon("multimedia-volume-control", 16, 0)
+            self.window.set_icon(icon)
+        elif icon_theme.has_icon("gnome-volume-control"):
+            icon = icon_theme.load_icon("gnome-volume-control",16,0)
+            self.window.set_icon(icon)
+        elif icon_theme.has_icon("stock_volume"):
+            icon = icon_theme.load_icon("stock_volume",16,0)
+            self.window.set_icon(icon)
+        else:
+            print ("No icon found, window will be iconless")
 
         menu = gtk.Menu()
 
@@ -412,14 +428,14 @@ class Equalizer:
 	table.attach(label, 1, 2, 0, 1)
 	table.attach(preampscale, 1, 2, 1, 2)
 	table.attach(preampscalevalue, 1, 2, 2, 3)
-	label.show()
-	preampscale.show()
-	preampscalevalue.show()
+	#label.show()
+	#preampscale.show()
+	#preampscalevalue.show()
 
 	# Separator between preamp and bands
 	separator = gtk.VSeparator()
 	table.attach(separator, 2, 3, 1, 2)
-	separator.show()
+	#separator.show()
 
 	# Equalizer bands
 	global scale
