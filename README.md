@@ -17,3 +17,10 @@ Leave the ~/.config/pulse/presets folder empty,
 otherwise the presets will occur twice !
 
 --------------------------------------------------------------------------------------
+
+Dependencies needed to get it working are:
+
+media-libs/ladspa-sdk
+media-plugins/swh-plugins
+
+otherwise it will (more or less) silently fail
